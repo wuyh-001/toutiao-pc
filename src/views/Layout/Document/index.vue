@@ -83,6 +83,7 @@
               circle
               icon="el-icon-edit"
               type="primary"
+              @click="editEvent(scope.row.id)"
             ></el-button>
             <el-button
               size="mini"
@@ -100,6 +101,7 @@
       <el-pagination
         layout="prev, pager, next"
         background
+        :current-page.sync="page"
         :total="totalCount"
         @current-change="currentEvent"
       >
@@ -145,10 +147,15 @@ export default {
   },
   mounted() {},
   methods: {
-      deleteEvent(id){
-        //   删除成功之后，为了更新试图，，可以重新获取文章列表数据 this.getArticleList()
-          console.log('delete:',id)
-      },
+    editEvent(id) {
+      this.$router.push({
+        path: "/publish?id=" + id,
+      });
+    },
+    deleteEvent(id) {
+      // 删除成功之后，为了更新试图，，可以重新获取文章列表数据 this.getArticleList()
+      console.log("delete:", id);
+    },
     currentEvent(currentPage) {
       this.page = currentPage;
     },
@@ -161,13 +168,13 @@ export default {
       this.channelList.push(...result.data.data.channels);
     },
     getArticleList() {
-    //   const result = await getArticles({
-    //     page: this.page,
-    //     per_page: this.per_page,
-    //     status: this.form.status,
-    //     begin_pubdate: this.form.date ? this.form.date[0] : null,
-    //     end_pubdate: this.form.date ? this.form.date[1] : null,
-    //   });
+      //   const result = await getArticles({
+      //     page: this.page,
+      //     per_page: this.per_page,
+      //     status: this.form.status,
+      //     begin_pubdate: this.form.date ? this.form.date[0] : null,
+      //     end_pubdate: this.form.date ? this.form.date[1] : null,
+      //   });
       let articles = [
         {
           id: 1,

@@ -48,7 +48,7 @@ export default {
         {
           title: "发布文章",
           index: "4",
-          path: "/article",
+          path: "/publish",
           icon: "s-promotion",
         },
         { title: "评论管理", index: "5", path: "/comment", icon: "s-comment" },
@@ -59,7 +59,6 @@ export default {
   },
   methods: {
     selectEvent(index, path) {
-        console.log(index,path)
       this.defaultIndex = index;
     },
   },

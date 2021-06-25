@@ -28,9 +28,24 @@ const routes = [
         component: () => import(/* webpackChunkName: "document" */ '../views/Layout/Document')
       },
       {
-        path: '/article',
-        name: 'article',
-        component: () => import(/* webpackChunkName: "article" */ '../views/Layout/Article')
+        path: '/picture', //素材管理
+        name: 'picture',
+        component: () => import(/* webpackChunkName: "article" */ '../views/Layout/Picture')
+      },
+      {
+        path: '/publish', // 发布文章 
+        name: 'publish',
+        component: () => import(/* webpackChunkName: "article" */ '../views/Layout/Publish')
+      },
+      {
+        path: '/comment', // 评论管理
+        name: 'comment',
+        component: () => import(/* webpackChunkName: "article" */ '../views/Layout/Comment')
+      },
+      {
+        path: '/present', // 粉丝管理
+        name: 'present',
+        component: () => import(/* webpackChunkName: "article" */ '../views/Layout/Present')
       },
       {
         path: '/my',
