@@ -10,71 +10,204 @@
         <!-- /面包屑路径导航 -->
         <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
       </div>
-      <div style="padding-bottom: 20px;">
-        <el-radio-group v-model="radio1" size="mini">
-          <el-radio-button label="全部"></el-radio-button>
-          <el-radio-button label="收藏"></el-radio-button>
+      <div class="action-btn">
+        <el-radio-group v-model="collect" size="mini" @change="changeEvent">
+          <el-radio-button :label="false">全部</el-radio-button>
+          <el-radio-button :label="true">收藏</el-radio-button>
         </el-radio-group>
+        <el-button size="mini" type="success" @click="showDialogEvent"
+          >上传素材</el-button
+        >
       </div>
       <!-- 素材列表 -->
       <el-row :gutter="10">
-        <el-col :xs="12" :sm="6" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"
-          ></el-image>
+        <el-col
+          class="mark-wrap"
+          :xs="12"
+          :sm="6"
+          :md="6"
+          :lg="4"
+          v-for="(img, index) in images"
+          :key="index"
+        >
+          <el-image style="height: 100px" :src="img.url" fit="cover"></el-image>
+          <div class="img-mark">
+            <i class="el-icon-delete"></i>
+            <i :class="`el-icon-star-${img.is_collected?'on':'off'}`"></i>
+          </div>
         </el-col>
-        <el-col :xs="12" :sm="6" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"
-          ></el-image>
-        </el-col>
-        <el-col :xs="12" :sm="6" :md="6" :lg="4">
-          <el-image
-            style="height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            fit="cover"
-          ></el-image>
-        </el-col>
-        
-        
-       
       </el-row>
       <!-- /素材列表 -->
     </el-card>
+    <el-dialog
+      title="上传素材"
+      :visible.sync="dialogUpload"
+      width="30%"
+      :append-to-body="true"
+    >
+      <el-upload
+        class="upload-demo"
+        drag
+        action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+        multiple
+        name="image"
+        :headers="uploadHeaders"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传jpg/png文件，且不超过500kb
+        </div>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getImages} from '@/api/image.js'
+import { getImages } from "@/api/image.js";
+import { getItem } from "@/utils/localStorage";
+const user = getItem("user-token");
 export default {
-  name: 'ImageIndex',
+  name: "ImageIndex",
   components: {},
   props: {},
-  data () {
+  data() {
     return {
-      radio1: '全部'
-    }
+      images: [],
+      collect: false,
+      dialogUpload: false,
+      imageUrl: "",
+      uploadHeaders: `Bearer ${user.token}`,
+    };
   },
   computed: {},
   watch: {},
-  created () {
-      this.getImageList();
+  created() {
+    this.getImageList(false);
   },
-  mounted () {},
+  mounted() {},
   methods: {
-      getImageList(){
-          getImages().then(res=>{
-              console.log(res)
-          }).catch(e=>{
-              console.log(e)
-          })
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
       }
-  }
-}
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    showDialogEvent() {
+      this.dialogUpload = true;
+    },
+    changeEvent(value) {
+      this.getImageList(value);
+    },
+    getImageList(collect) {
+      let images = [
+        {
+          id: 1,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: true,
+        },
+        {
+          id: 2,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: false,
+        },
+        {
+          id: 3,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: false,
+        },
+        {
+          id: 4,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: true,
+        },
+        {
+          id: 11,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: true,
+        },
+        {
+          id: 12,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: false,
+        },
+        {
+          id: 13,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: false,
+        },
+        {
+          id: 14,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: true,
+        },
+        {
+          id: 21,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: true,
+        },
+        {
+          id: 22,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: false,
+        },
+        {
+          id: 23,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: false,
+        },
+        {
+          id: 24,
+          url: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
+          is_collected: true,
+        },
+      ];
+      this.images = [...images];
+      //   getImages({ collect })
+      //     .then((res) => {
+      //       console.log(res);
+      //       this.images = res.data.data.result;
+      //     })
+      //     .catch((e) => {
+      //       console.log(e);
+      //     });
+    },
+  },
+};
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.image-container {
+  .action-btn {
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .mark-wrap {
+    position: relative;
+    .img-mark {
+      height: 40px;
+      background-color: rgba(204, 204, 204, 0.5);
+      position: absolute;
+      bottom: 4px;
+      left: 5px;
+      right: 5px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      i{
+          cursor: pointer;
+      }
+    }
+  }
+}
+</style>
